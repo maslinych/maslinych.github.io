@@ -1,0 +1,36 @@
+/* print.css — printable version of any page (SPECIFICATION.md §9.3). Linked with media="print",
+   so it applies only when printing: no navigation, no interactive chrome, no link-URL noise,
+   black on white, and the bibliography hanging indents preserved. Someone printing the
+   publications list or a landing page must get something usable. */
+
+/* Drop everything that is navigation or interaction. */
+.site-nav, #search-filter, .filter-box, .see-teaching { display: none; }
+
+body {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  color: #000;
+  background: #fff;
+  font-size: 10.5pt;
+  line-height: 1.4;
+}
+
+/* Links printed as plain text — no href expansion, no colour noise. */
+a { color: #000; text-decoration: none; }
+
+h1, h2 { border: none; }
+h2 { margin-top: 1.4em; }
+
+/* Hanging indents survive into print (§9.3). */
+li.csl-entry, .formatted-citation { padding-left: 1.4em; text-indent: -1.4em; }
+
+.entry-links, .strand-tag, .rel-type, .version-statement, .site-footer, .course-meta,
+.course-years, .entry-note { color: #000; }
+.strand-tag { border-color: #000; }
+.version-statement { border-color: #000; }
+
+/* Strip screen backgrounds so ink is used only where it carries meaning. */
+.bibtex pre { background: none; border: 1px solid #999; }
+
+.site-footer { border-top: 1px solid #000; margin-top: 1.5em; }

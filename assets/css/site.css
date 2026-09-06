@@ -1,0 +1,377 @@
+/* site.css — the site stylesheet (SPECIFICATION.md §9). Single column, no sidebar; self-hosted
+   Libertinus Serif with old-style figures and real small caps; hanging indents on bibliography
+   entries. Companion print.css strips chrome for printing (§9.3). No CDN, no web fonts (§14). */
+
+/* ── Self-hosted Libertinus (woff2 converted from the OTFs, features intact — §9.1, §12.6).
+   url() is relative to this file (/assets/css/), so it never needs the site baseurl. ── */
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url("../fonts/LibertinusSerif-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: italic; font-weight: 400; font-display: swap;
+  src: url("../fonts/LibertinusSerif-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: normal; font-weight: 700; font-display: swap;
+  src: url("../fonts/LibertinusSerif-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libertinus Serif";
+  font-style: italic; font-weight: 700; font-display: swap;
+  src: url("../fonts/LibertinusSerif-BoldItalic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libertinus Mono";
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url("../fonts/LibertinusMono-Regular.woff2") format("woff2");
+}
+
+/* ── Theme palette. To experiment with a color scheme, edit these two blocks only.
+   Neutral grays (#555…#9a9a9a, rgba(128,128,128,…)) elsewhere are theme-agnostic and
+   deliberately not parameterized. Keep --accent at ≥4.5:1 contrast against --bg in
+   both themes; --accent-fg is the text color on accent-filled surfaces. ── */
+:root {
+  color-scheme: light dark;
+  --bg: #fdfdfb;
+  --fg: #1a1a1a;
+  --accent: #c92a2a;     /* rubric red: links, tags, the primary accent */
+  --accent-2: #1c4f9c;   /* paraph blue: the projects surface only (§6.2a) */
+  --accent-fg: #fff;
+  --muted: #5f5f5f;      /* de-emphasized text: the language switch, entry notes */
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #212529;
+    --fg: #dee2e6;
+    --accent: #ffa8a8;
+    --accent-2: #9ec1f0;
+    --accent-fg: #16161a;
+    --muted: #adb5bd;
+  }
+}
+
+body {
+  max-width: 38rem;                       /* measure ~34em on prose pages (§9.1) */
+  margin: 2.5rem auto;
+  padding: 0 1.25rem;
+  font-family: "Libertinus Serif", Georgia, "Times New Roman", serif;
+  font-variant-numeric: oldstyle-nums;    /* old-style figures in running text (§9.1) */
+  line-height: 1.55;                      /* generous leading (§9.1) */
+  color: var(--fg);
+  background: var(--bg);
+}
+
+/* Aligned columns (dates, tables) want lining figures, not old-style (§9.1). */
+.course-years, .filter-toggles, table { font-variant-numeric: lining-nums tabular-nums; }
+
+a { color: var(--accent); }
+code, pre, .bibtex pre { font-family: "Libertinus Mono", ui-monospace, monospace; }
+
+/* Navigation — one horizontal row, identical on every page, in real small caps (§9.1, §9.2). */
+.site-nav {
+  position: relative;                     /* anchors the language switch */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  padding-bottom: 0.6rem;
+  padding-right: 4.5em;                   /* reserved so links never run under the switch */
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.35);
+  font-variant-caps: small-caps;
+  letter-spacing: 0.03em;
+  font-size: 1.02rem;
+}
+.site-nav a { text-decoration: none; }
+.site-nav a:hover { text-decoration: underline; }
+/* Language switch (§4.1): pinned to the right end of the ruler, smaller and muted, so it
+   reads as a mode switch rather than another section. Baseline-matched to the menu row. */
+.site-nav .lang-switch {
+  position: absolute;
+  right: 0;
+  top: 0.18rem;
+  font-size: 0.85em;
+  color: var(--muted);
+}
+
+h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1.5rem; }
+h2 {
+  font-size: 1.15rem;
+  margin-top: 2.4rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+/* Real small caps for the section labels on the list, research and teaching pages (§9.1). */
+.pub-section > h2, .strand > h2, .teaching-institution > h2 {
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+
+/* Bibliography entries — hanging indent (§9.1). */
+ol.csl-bib-body { list-style: none; padding: 0; margin: 0; }
+li.csl-entry {
+  padding-left: 1.6rem;
+  text-indent: -1.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.entry-links {
+  display: block;
+  text-indent: 0;
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+}
+
+/* Optional one-line factual gloss beneath the formatted citation (§6.3) — every list and
+   the landing page alike. --muted (not a fixed gray) so it stays readable in dark mode. */
+.entry-note {
+  text-indent: 0;
+  margin-top: 0.15rem;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* Weightier per-entry commentary (§6.3) — profile `selected` lists only. Full-weight
+   text, not muted: this is curated rhetorical prose, not a de-emphasized fact. */
+.entry-annotation {
+  text-indent: 0;
+  margin-top: 0.3rem;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+.entry-links a { margin-right: 0.7rem; text-decoration: none; }
+.entry-links a:hover { text-decoration: underline; }
+
+/* A pill, not a word: never underlined, on any surface. Inside .entry-links it inherited
+   that from the rule above; standing alone (project strand tags, §6.2a) it did not. The
+   hover feedback is the border and the opacity — an underline through a pill reads as damage.
+   The second selector outranks `.entry-links a:hover` rather than relying on source order. */
+.strand-tag {
+  display: inline-block;
+  padding: 0 0.4rem;
+  border: 1px solid rgba(128, 128, 128, 0.4);
+  border-radius: 0.6rem;
+  color: inherit;
+  opacity: 0.75;
+  text-decoration: none;
+}
+.strand-tag:hover,
+.entry-links a.strand-tag:hover {
+  text-decoration: none;
+  opacity: 1;
+  border-color: var(--accent);
+}
+
+.title-translation { color: var(--muted); }
+
+/* Collapsed non-English groups within a strand (§6.2) — native <details>, no JS. */
+details.lang-group { margin: 0.6rem 0 0.9rem; }
+details.lang-group > summary {
+  cursor: pointer;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+details.lang-group[open] > summary { margin-bottom: 0.7rem; }
+
+/* Landing / profile pages (§6.1). Small portrait beside the positioning statement — never
+   a hero image. */
+.portrait {
+  float: right;
+  width: 150px;
+  height: auto;
+  margin: 0 0 1rem 1.5rem;
+  border-radius: 3px;
+}
+.intro { margin-bottom: 1.5rem; }
+.intro p { margin: 0 0 0.8rem; }
+
+/* Primary contact under the intro (§14: mailto, never a form). Same idiom as every other
+   label on the site — small caps at weight 400, muted; the address itself is an ordinary link. */
+.contact { margin: 0 0 1.8rem; }
+.contact-label {
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin-right: 0.4em;
+}
+
+.strand-span {
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: #888;
+}
+.strand-desc { margin: 0.4rem 0 0.8rem; }
+
+/* Projects (§6.2a). A project is neither a bibliographic entry nor a strand, but it is rendered
+   inside the same typographic system: small caps, no bold anywhere, and the second accent
+   (paraph blue) marking this surface while red stays the link colour. */
+.projects > h2, .project-pubs-label {
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+.project {
+  clear: both;                            /* keeps consecutive miniatures from colliding */
+  margin: 0 0 1.8rem;
+}
+.project-title {
+  font-size: 1rem;
+  font-weight: 400;                       /* nothing here is bold (§9.1) */
+  margin: 0 0 0.1rem;
+}
+.project-name {
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+  color: var(--accent-2);
+}
+.project-gloss { font-style: italic; }
+
+/* The marginal miniature — a square crop, pulled OUT of the text column into the left margin
+   at wide viewports the way an illumination sits in a manuscript margin. Below that width it
+   falls back to an ordinary float inside the column, so it never overflows. Width and height
+   are fixed here as well as on the element, so there is no layout shift. */
+.project-miniature {
+  float: left;
+  width: 5.5rem;
+  height: 5.5rem;
+  object-fit: cover;
+  margin: 0.25rem 0.9rem 0.4rem 0;
+}
+@media (min-width: 54rem) {
+  .project-miniature { margin-left: -6.4rem; }   /* body is a 38rem measure, centred */
+}
+
+/* Inline runs — one line of spans separated by a centred dot, instead of a stacked column.
+   Used for role/host/url, the outward links, and the compact publication list. */
+.inline-run > span + span::before {
+  content: "·";
+  margin: 0 0.4rem;
+  color: var(--muted);
+}
+/* …but the run's label introduces the list, it is not an item in it. */
+.project-pubs-label + .pub-ref::before { content: none; margin: 0; }
+.project-meta { margin: 0 0 0.35rem; font-size: 0.88rem; color: var(--muted); }
+.project-desc { margin: 0 0 0.4rem; }
+.project-desc p { margin: 0 0 0.5rem; }
+.project-links { margin: 0 0 0.35rem; font-size: 0.88rem; }
+.project-strands { margin: 0.35rem 0 0; font-size: 0.8rem; }
+
+/* Related publications. Compact (landing pages): title in italics, year, and a small red mark
+   linking to the per-publication page — no bullets, no underlined title. Full (/projects/):
+   ordinary formatted citations, identical to the strand lists. */
+.project-pubs { margin: 0.35rem 0 0; font-size: 0.88rem; }
+.project-pubs-label { color: var(--accent-2); margin-right: 0.35rem; }
+.project-pubs ol.csl-bib-body { margin-top: 0.25rem; font-size: 1rem; }
+.pub-ref cite { font-style: italic; }
+.pub-year { font-variant-numeric: lining-nums tabular-nums; color: var(--muted); }
+.pub-mark {
+  margin-left: 0.3rem;
+  text-decoration: none;                  /* a mark, not a word: underlining it reads as damage */
+  font-size: 0.9em;
+}
+.pub-mark:hover { text-decoration: none; opacity: 0.7; }
+
+/* The archive's entrance from the publications page — it is not in the nav (§6.5). */
+.see-archive { margin: 0 0 1rem; font-size: 0.9rem; }
+
+/* Per-entry pages (§6.4). */
+.entry-title { font-size: 1.4rem; }
+.formatted-citation { margin: 1rem 0; padding-left: 1.6rem; text-indent: -1.6rem; }
+/* Label above each citation variant and its BibTeX snippet (§6.4). */
+.citation-variant-label {
+  display: block;
+  text-indent: 0;
+  font-size: 0.78rem;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+/* Inside the hanging-indent citation block, align the label with the first line. */
+.formatted-citation .citation-variant-label { margin-left: -1.6rem; }
+.bibtex .citation-variant-label { margin: 0.8rem 0 0.3rem; }
+.publication .entry-links { text-indent: 0; margin: 0.5rem 0 1rem; }
+.version-statement {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: #555;
+  border-left: 2px solid rgba(128, 128, 128, 0.4);
+  padding-left: 0.8rem;
+}
+.abstract, .related, .bibtex { margin-top: 2rem; }
+.rel-type { color: #888; font-size: 0.85rem; }
+.bibtex pre {
+  overflow-x: auto;
+  padding: 0.9rem 1rem;
+  background: rgba(128, 128, 128, 0.1);
+  border-radius: 3px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+/* Client-side filter (§9.4) — injected by search.js; absent without it. */
+.filter-box { margin: 0 0 1.5rem; }
+.filter-box input[type="search"] {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  font: inherit;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 3px;
+  background: transparent;
+  color: inherit;
+}
+.filter-toggles { margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.filter-toggles button {
+  padding: 0.1rem 0.6rem;
+  font: inherit;
+  font-size: 0.82rem;
+  color: inherit;
+  background: transparent;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  border-radius: 0.7rem;
+  cursor: pointer;
+}
+.filter-toggles button.on {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+
+/* Teaching record (§6.6). Same idiom as the projects surface (§6.2a) and for the same reason:
+   a course is neither a bibliographic entry nor a project, but it is one more curated record and
+   must not read as a foreign object. Institution headers are real small caps like every other
+   section label; the course title is the entry label, weight 400 in paraph blue. No bold. */
+.teaching-institution { margin-top: 2rem; }
+.course { margin: 0 0 1.2rem; }
+.course-title {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+}
+.course-name { color: var(--accent-2); }
+/* The translation of the title as taught (§4.5) — italic beside it, exactly as a project's
+   descriptive subtitle sits beside the project name, and in ordinary ink so it reads as a
+   gloss on the label rather than as part of it. */
+.course-gloss { font-style: italic; }
+.course-meta { margin: 0.15rem 0; font-size: 0.88rem; color: var(--muted); }
+/* The years open the meta line, in ordinary ink while the rest of the line stays muted: they
+   are the one fact a reader scans a teaching record for, and leading a muted line in the same
+   muted grey would bury them. Lining tabular figures come from the rule at the top of the file. */
+.course-years { color: var(--fg); }
+.course-desc { margin: 0.15rem 0; }
+.course-materials { margin: 0.3rem 0 0; font-size: 0.85rem; }
+
+.site-footer {
+  margin-top: 3.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(128, 128, 128, 0.35);
+  font-size: 0.85rem;
+  color: #666;
+}
+.footer-ids { list-style: none; padding: 0; margin: 0.3rem 0; }
+.footer-ids li { display: inline; margin-right: 1rem; }
