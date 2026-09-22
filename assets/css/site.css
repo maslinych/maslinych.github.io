@@ -179,24 +179,28 @@ details.lang-group > summary {
 }
 details.lang-group[open] > summary { margin-bottom: 0.7rem; }
 
-/* Landing / profile pages (§6.1). Small portrait beside the positioning statement — never
-   a hero image, and never something a paragraph has to flow around. At wide viewports it is
-   pulled OUT of the text column into the left margin, the same idiom as a project miniature
-   (§6.2a), a little larger because it is the one image on the page: 8rem wide is ~150px on
-   the long edge, the floor of the range §6.1 asks for. The breakpoint is higher than the
-   miniature's 54rem because the pull is deeper (9rem vs 6.4rem) and still needs a gutter.
-   Below it, no float at all: a block between the title and the intro. */
+/* Landing / profile pages (§6.1). Small portrait beside the positioning statement — never a
+   hero image. It floats RIGHT, inside the measure, with the opening paragraph of the intro
+   running around it (owner's decision, 2026-09-22). That is deliberate and not the marginal
+   idiom the project miniatures use (§6.2a): 150px wide is ~175px tall, which is about the
+   height of that first paragraph, so the wrap closes cleanly at the paragraph break instead
+   of dribbling two or three short lines underneath. It depends on the image sitting AFTER the
+   <h1> in profile.html.j2 — beside the statement, not above the title — so the two move
+   together. Keep the displayed width near 150px: much narrower and the wrap outlives the
+   paragraph, much wider and it eats the measure.
+   Below 34rem there is no measure left to share, so the float is dropped entirely rather than
+   squeezing the text into a 20-character column. */
 .portrait {
   display: block;
-  width: 8rem;
+  width: 150px;
   height: auto;
   margin: 0 0 1rem;
   border-radius: 3px;
 }
-@media (min-width: 60rem) {
+@media (min-width: 34rem) {
   .portrait {
-    float: left;
-    margin: 0.35rem 0 0.6rem -9rem;       /* body is a 38rem measure, centred */
+    float: right;
+    margin: 0.35rem 0 0.6rem 1.5rem;
   }
 }
 .intro { margin-bottom: 1.5rem; }
