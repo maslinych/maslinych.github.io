@@ -180,13 +180,24 @@ details.lang-group > summary {
 details.lang-group[open] > summary { margin-bottom: 0.7rem; }
 
 /* Landing / profile pages (§6.1). Small portrait beside the positioning statement — never
-   a hero image. */
+   a hero image, and never something a paragraph has to flow around. At wide viewports it is
+   pulled OUT of the text column into the left margin, the same idiom as a project miniature
+   (§6.2a), a little larger because it is the one image on the page: 8rem wide is ~150px on
+   the long edge, the floor of the range §6.1 asks for. The breakpoint is higher than the
+   miniature's 54rem because the pull is deeper (9rem vs 6.4rem) and still needs a gutter.
+   Below it, no float at all: a block between the title and the intro. */
 .portrait {
-  float: right;
-  width: 150px;
+  display: block;
+  width: 8rem;
   height: auto;
-  margin: 0 0 1rem 1.5rem;
+  margin: 0 0 1rem;
   border-radius: 3px;
+}
+@media (min-width: 60rem) {
+  .portrait {
+    float: left;
+    margin: 0.35rem 0 0.6rem -9rem;       /* body is a 38rem measure, centred */
+  }
 }
 .intro { margin-bottom: 1.5rem; }
 .intro p { margin: 0 0 0.8rem; }
