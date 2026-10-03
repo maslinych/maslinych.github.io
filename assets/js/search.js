@@ -8,7 +8,9 @@
   if (!mount || !cfgEl) return;
   var cfg = JSON.parse(cfgEl.textContent);
 
-  fetch(cfg.index).then(function (r) { return r.json(); }).then(function (records) {
+  // Revalidate on every load (a cheap 304 when unchanged): a cached index from before a new
+  // entry leaves that entry unfilterable — it matches everything and contributes no toggles.
+  fetch(cfg.index, { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (records) {
     var bySlug = {};
     records.forEach(function (rec) { bySlug[rec.slug] = rec; });
 
@@ -36,10 +38,14 @@
     input.addEventListener('input', function () { query = input.value.toLowerCase(); apply(); });
     box.appendChild(input);
 
-    function toggles(present, labels, active) {
+    function toggles(present, labels, order, active) {
       var wrap = document.createElement('div');
       wrap.className = 'filter-toggles';
-      Object.keys(present).forEach(function (id) {
+      // Config order first (strands, then keywords, §6.2b), then anything unlabelled.
+      var seen = {};
+      (order || []).concat(Object.keys(present)).forEach(function (id) {
+        if (!present[id] || seen[id]) return;
+        seen[id] = true;
         var b = document.createElement('button');
         b.type = 'button';
         b.textContent = labels[id] || id;
@@ -52,9 +58,10 @@
       });
       return wrap;
     }
-    box.appendChild(toggles(strandsHere, cfg.strands, activeStrands));
-    box.appendChild(toggles(sectionsHere, cfg.sections, activeSections));
-    box.appendChild(toggles(langsHere, cfg.langs || {}, activeLangs));
+    var order = cfg.order || {};
+    box.appendChild(toggles(strandsHere, cfg.strands, order.strands, activeStrands));
+    box.appendChild(toggles(sectionsHere, cfg.sections, order.sections, activeSections));
+    box.appendChild(toggles(langsHere, cfg.langs || {}, order.langs, activeLangs));
     mount.appendChild(box);
 
     function matches(rec) {
@@ -67,7 +74,8 @@
       if (lSel.length && lSel.indexOf(rec.lang) < 0) return false;
       if (query) {
         var hay = [rec.title, rec.titletranslation, rec.titletransliteration,
-                   rec.authors, rec.venue, rec.year].join(' ').toLowerCase();
+                   rec.authors, rec.venue, rec.year].concat((rec.strands || []).map(
+                     function (s) { return cfg.strands[s] || s; })).join(' ').toLowerCase();
         if (hay.indexOf(query) < 0) return false;
       }
       return true;
